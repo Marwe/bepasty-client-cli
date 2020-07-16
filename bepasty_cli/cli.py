@@ -259,7 +259,7 @@ def upload(token, filename, fname, url, ftype, insecure, lifetime):
     first_chunk = fileobj.read(read_size)
     if not ftype:
         mime = magic.Magic(mime=True)
-        ftype = mime.from_buffer(first_chunk).decode()
+        ftype = mime.from_buffer(first_chunk)
 
         if not ftype:
             ftype = 'text/plain'

@@ -6,7 +6,7 @@
 commandline client for bepasty-server
 """
 
-from __future__ import print_function
+
 import base64
 import re
 import os
@@ -16,7 +16,7 @@ import errno
 import codecs
 import warnings
 try:
-    from ConfigParser import SafeConfigParser as ConfigParser, Error as ConfigParserError
+    from configparser import SafeConfigParser as ConfigParser, Error as ConfigParserError
 except ImportError:
     # Python 3
     from configparser import ConfigParser, Error as ConfigParserError
@@ -40,7 +40,7 @@ LIFETIME_NAMES = (
     'MINUTES', 'MINUTES', 'HOURS', 'HOURS', 'DAYS', 'DAYS', 'WEEKS', 'WEEKS',
     'MONTHS', 'MONTHS', 'YEARS', 'YEARS', 'FOREVER', 'FOREVER'
 )
-LIFETIME_MAPPING = dict(zip(LIFETIME_CHOICES, LIFETIME_NAMES))
+LIFETIME_MAPPING = dict(list(zip(LIFETIME_CHOICES, LIFETIME_NAMES)))
 CONFIG_DEFAULTS = dict(
     token='',
     url='',
@@ -74,7 +74,7 @@ def setup_config_parser(override=None):
         override = dict()
     config = ConfigParser()
     config.add_section('bepasty-client-cli')
-    for k, v in CONFIG_DEFAULTS.items():
+    for k, v in list(CONFIG_DEFAULTS.items()):
         v = override.get(k, v)
         config.set('bepasty-client-cli', k, str(v))
     return config
@@ -106,7 +106,7 @@ def setup_configuration(ctx, param, value):
     except ConfigParserError as exc:
         raise click.UsageError('Error in configuration file: {}'.format(exc))
     ctx.default_map = dict()
-    for option in CONFIG_DEFAULTS.keys():
+    for option in list(CONFIG_DEFAULTS.keys()):
         if option == 'insecure':
             try:
                 ctx.default_map[option] = config.getboolean('bepasty-client-cli', option)
@@ -224,7 +224,7 @@ def print_list(token, url, insecure):
         verify=not insecure
     )
     try:
-        for k, v in response.json().items():
+        for k, v in list(response.json().items()):
             meta = v['file-meta']
             if not meta:
                 print("{:8}: BROKEN PASTE".format(k))
